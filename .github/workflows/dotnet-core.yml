@@ -12,7 +12,12 @@ jobs:
       id: script
       with:
         script: |
-          Write-Host 'Hellow World'
+          Write-Host 'Hello World'
+          $sourcePath = "${env:WORKSPACE}\\"
+          write-host "$sourcePath"
+          $destinationPath = Split-Path -Path "$sourcePath"
+          $destinationPath += "\\${env:JOB_NAME}-${env:BUILD_NUMBER}.zip"
+          Write-Host "$destinationPath"
     
     - uses: actions/checkout@v1
     - name: Setup .NET Core
