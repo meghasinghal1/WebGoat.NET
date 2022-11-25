@@ -1,4 +1,14 @@
 name: WebGoat Test Api
+
+env:
+  Offensive360SastApi_ProjectId: ''
+  Offensive360SastApi_SCA: True
+  Offensive360SastApi_Malware: True
+  Offensive360SastApi_Licence: True
+  Offensive360SastApi_AccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjYyMDMwNGI1YjE3NTFhMmM4YjdkNGY3YSIsIlVzZXJuYW1lIjoiYWRtaW4gNToxMiBQTSIsInJvbGUiOiJFeHRlcm5hbCIsIkppcmFBdXRoZW50aWNhdGVkIjoiZmFsc2UiLCJuYmYiOjE2NjkwNTA3NzEsImV4cCI6MTY2OTY1NTU3MSwiaWF0IjoxNjY5MDUwNzcxfQ._OZHvFm_UPL_EY5yNO3r9xzsTryI7k53ODdTlIVBOf0'
+  Offensive360SastApi_BaseUrl: 'http://80.208.226.84:1800'
+  Offensive360SastUi_BaseUrl: 'http://80.208.226.84'
+  ADO_BreakBuildWhenVulnsFound: True
  
 on:
   push:
@@ -49,27 +59,27 @@ jobs:
           $malware = $false
           $licence = $false
 
-          if("$env:Offensive360SastApi_ProjectId" -ne "")
+          if("$Offensive360SastApi_ProjectId" -ne "")
           {
-           $projectId = "$env:Offensive360SastApi_ProjectId"
+             $projectId = "$Offensive360SastApi_ProjectId"
           }
-          if("$env:Offensive360SastApi_SCA" -ne "")
-             {
-              $sca = "$env:Offensive360SastApi_SCA"
-             }
-             if("$env:Offensive360SastApi_Malware" -ne "")
-             {
-              $malware = "$env:Offensive360SastApi_Malware"
-             }
-             if("$env:Offensive360SastApi_Licence" -ne "")
-             {
-              $licence = "$env:Offensive360SastApi_Licence"
-             }
+          if("$Offensive360SastApi_SCA" -ne "")
+          {
+             $sca = "$Offensive360SastApi_SCA"
+          }
+          if("$Offensive360SastApi_Malware" -ne "")
+          {
+             $malware = "$Offensive360SastApi_Malware"
+          }
+          if("$Offensive360SastApi_Licence" -ne "")
+          {
+             $licence = "$Offensive360SastApi_Licence"
+          }
 
-          $projectName = "Zenkins_Project_$buildId"
+          $projectName = "Github_Project_$buildId"
           $boundary = [System.Guid]::NewGuid().ToString()
 
-          Write-Host "Starting scanning for the project name [$projectName], accessToken [$env:Offensive360SastApi_AccessToken], url [$env:Offensive360SastApi_BaseUrl], buildId [$buildId], filePath [$filePath], boundary [$boundary], projectId [$env:Offensive360SastApi_ProjectId], SCA [$sca], Malware [$malware], Licence [$licence]"
+          Write-Host "Starting scanning for the project name [$projectName], accessToken [$Offensive360SastApi_AccessToken], url [$Offensive360SastApi_BaseUrl], buildId [$buildId], filePath [$filePath], boundary [$boundary], projectId [$Offensive360SastApi_ProjectId], SCA [$sca], Malware [$malware], Licence [$licence]"
 
           $fileBytes = [System.IO.File]::ReadAllBytes($filePath)
           $fileContent = [System.Text.Encoding]::GetEncoding('iso-8859-1').GetString($fileBytes)
@@ -101,18 +111,18 @@ jobs:
            "--$boundary--$LF"
           ) -join $LF
 
-          $apiResponse = Invoke-RestMethod -Method Post -Uri ("{0}/app/api/ExternalScan/single-file" -f $env:Offensive360SastApi_BaseUrl.TrimEnd('/')) -ContentType "multipart/form-data; boundary=`"$boundary`"" -Headers @{"Accept" = "application/json"; "Authorization" = "Bearer $env:Offensive360SastApi_AccessToken"} -Body $bodyLines
+          $apiResponse = Invoke-RestMethod -Method Post -Uri ("{0}/app/api/ExternalScan/single-file" -f $Offensive360SastApi_BaseUrl.TrimEnd('/')) -ContentType "multipart/form-data; boundary=`"$boundary`"" -Headers @{"Accept" = "application/json"; "Authorization" = "Bearer $Offensive360SastApi_AccessToken"} -Body $bodyLines
 
           write-host ("total vulnerabilities count = {0}" -f $apiResponse.vulnerabilities.length)
 
-          if ($apiResponse.vulnerabilities.length -gt 0 -and "$env:ADO_BreakBuildWhenVulnsFound" -eq 'True') 
+          if ($apiResponse.vulnerabilities.length -gt 0 -and "$ADO_BreakBuildWhenVulnsFound" -eq 'True') 
           {
            write-host "\n\n**********************************************************************************************************************"
-           write-host ("Offensive 360 vulnerability dashboard : {0}/Scan/showscan-{1}-{2}" -f $env:Offensive360SastUi_BaseUrl.TrimEnd('/'), $apiResponse.projectId, $apiResponse.id)
+           write-host ("Offensive 360 vulnerability dashboard : {0}/Scan/showscan-{1}-{2}" -f $Offensive360SastUi_BaseUrl.TrimEnd('/'), $apiResponse.projectId, $apiResponse.id)
            write-host "**********************************************************************************************************************\n\n"
            throw [System.Exception] "Vulnerabilities found and breaking the build."
           }
-          elseif ($apiResponse.vulnerabilities.length -gt 0 -and "$env:ADO_BreakBuildWhenVulnsFound" -ne 'True') 
+          elseif ($apiResponse.vulnerabilities.length -gt 0 -and "$ADO_BreakBuildWhenVulnsFound" -ne 'True') 
           {
            Write-Warning 'Vulnerabilities found and since ADO_BreakBuildWhenVulnsFound is set to false so continuing to build it.'
           }
