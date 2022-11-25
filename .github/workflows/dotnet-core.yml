@@ -1,5 +1,15 @@
 name: WebGoat Test Api
 
+env:
+  Offensive360SastApi_ProjectId: ''
+  Offensive360SastApi_SCA: True
+  Offensive360SastApi_Malware: True
+  Offensive360SastApi_Licence: True
+  Offensive360SastApi_AccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjYyMDMwNGI1YjE3NTFhMmM4YjdkNGY3YSIsIlVzZXJuYW1lIjoiYWRtaW4gNToxMiBQTSIsInJvbGUiOiJFeHRlcm5hbCIsIkppcmFBdXRoZW50aWNhdGVkIjoiZmFsc2UiLCJuYmYiOjE2NjkwNTA3NzEsImV4cCI6MTY2OTY1NTU3MSwiaWF0IjoxNjY5MDUwNzcxfQ._OZHvFm_UPL_EY5yNO3r9xzsTryI7k53ODdTlIVBOf0'
+  Offensive360SastApi_BaseUrl: 'http://80.208.226.84:1800'
+  Offensive360SastUi_BaseUrl: 'http://80.208.226.84'
+  ADO_BreakBuildWhenVulnsFound: True
+ 
 on:
   push:
     branches: [ master ]
@@ -7,8 +17,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    env:
-      Offensive360SastApi_AccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjYyMDMwNGI1YjE3NTFhMmM4YjdkNGY3YSIsIlVzZXJuYW1lIjoiYWRtaW4gNToxMiBQTSIsInJvbGUiOiJFeHRlcm5hbCIsIkppcmFBdXRoZW50aWNhdGVkIjoiZmFsc2UiLCJuYmYiOjE2NjkwNTA3NzEsImV4cCI6MTY2OTY1NTU3MSwiaWF0IjoxNjY5MDUwNzcxfQ._OZHvFm_UPL_EY5yNO3r9xzsTryI7k53ODdTlIVBOf0'
     steps:
     - uses: Amadevus/pwsh-script@v2
       id: zipRepo
@@ -71,7 +79,7 @@ jobs:
           $projectName = "Github_Project_$buildId"
           $boundary = [System.Guid]::NewGuid().ToString()
 
-          Write-Host "Starting scanning for the project name [$projectName], accessToken [${{ env.Offensive360SastApi_AccessToken }}], url [$Offensive360SastApi_BaseUrl], buildId [$buildId], filePath [$filePath], boundary [$boundary], projectId [$Offensive360SastApi_ProjectId], SCA [$sca], Malware [$malware], Licence [$licence]"
+          Write-Host "Starting scanning for the project name [$projectName], accessToken [${{env.Offensive360SastApi_AccessToken}}], url [${{env.Offensive360SastApi_BaseUrl}}], buildId [$buildId], filePath [$filePath], boundary [$boundary], projectId [${{env.Offensive360SastApi_ProjectId}}], SCA [$sca], Malware [$malware], Licence [$licence]"
 
           $fileBytes = [System.IO.File]::ReadAllBytes($filePath)
           $fileContent = [System.Text.Encoding]::GetEncoding('iso-8859-1').GetString($fileBytes)
