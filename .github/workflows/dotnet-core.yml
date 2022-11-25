@@ -13,10 +13,10 @@ jobs:
       with:
         script: |
           Write-Host 'Hello World'
-          $sourcePath = "${{ github.workspace }}\\"
+          $sourcePath = "${{ github.workspace }}/"
           write-host "$sourcePath"
           $destinationPath = Split-Path -Path "$sourcePath"
-          $destinationPath += "\\${env:JOB_NAME}-${env:BUILD_NUMBER}.zip"
+          $destinationPath += "\\${{ github.workflow }}-${env:BUILD_NUMBER}.zip"
           Write-Host "$destinationPath"
     
     - uses: actions/checkout@v1
