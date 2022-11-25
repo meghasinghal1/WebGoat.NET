@@ -16,7 +16,7 @@ jobs:
           $sourcePath = "${{ github.workspace }}/"
           write-host "$sourcePath"
           $destinationPath = Split-Path -Path "$sourcePath"
-          $destinationPath += "/${{ github.workflow }}-${{ github.job }}.zip"
+          $destinationPath += "/${{ github.workflow }}-${{ job.name }}.zip"
           Write-Host "$destinationPath"
     
     - uses: actions/checkout@v1
