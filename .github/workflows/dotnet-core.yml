@@ -13,7 +13,7 @@ jobs:
       with:
         script: |
           Write-Host 'Hello World'
-          $sourcePath = "${{ github.repository }}\\"
+          $sourcePath = "${{ github.workspace }}\\"
           write-host "$sourcePath"
           $destinationPath = Split-Path -Path "$sourcePath"
           $destinationPath += "\\${env:JOB_NAME}-${env:BUILD_NUMBER}.zip"
