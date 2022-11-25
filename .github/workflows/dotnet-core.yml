@@ -18,7 +18,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: Amadevus/pwsh-script@v4
+    - uses: Amadevus/pwsh-script@v3
       id: zipRepo
       with:
         script: |
@@ -43,7 +43,7 @@ jobs:
           }
           $zip.Dispose()
           
-    - uses: Amadevus/pwsh-script@v4
+    - uses: Amadevus/pwsh-script@v3
       id: uploadZip
       with:
         script: |
